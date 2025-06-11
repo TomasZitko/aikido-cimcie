@@ -1,0 +1,2385 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studovna pro Aikidisty</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-bg: #FFFFFF;
+            --secondary-bg: #000000;
+            --text-primary: #000000;
+            --text-secondary: #000000;
+            --accent-color1: #000000;
+            --accent-color2: #000000;
+            --heading-font: 'Playfair Display', serif;
+            --body-font: 'Montserrat', sans-serif;
+        }
+
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-logo {
+            width: 150px;
+            height: 150px;
+            animation: spin 2s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            color: #FFFFFF;
+            font-family: var(--heading-font);
+            font-size: 1.5rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        body {
+            font-family: var(--body-font);
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            line-height: 1.7;
+            font-size: 16px;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 0.5rem 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .navbar .nav-logo {
+            font-size: 2rem;
+            font-weight: 400;
+            font-family: var(--heading-font);
+            color: #fff;
+            letter-spacing: 1px;
+            text-decoration: none;
+            border: none;
+            position: relative;
+        }
+
+        .navbar .nav-logo::after {
+            display: none !important;
+        }
+
+        .navbar .nav-link {
+            color: #fff;
+            font-family: var(--heading-font);
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+        }
+
+        .navbar .nav-link.active,
+        .navbar .nav-link:hover {
+            color: #fff;
+        }
+
+        .navbar-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 2rem;
+            font-weight: bold;
+            font-family: var(--heading-font);
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-item {
+            margin-left: 30px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            font-family: var(--heading-font);
+            letter-spacing: 0.5px;
+            padding: 8px 0;
+            position: relative;
+            text-transform: uppercase;
+            color: #fff;
+            display: inline-block;
+            text-decoration: none;
+            border: none;
+        }
+
+        .nav-link::after {
+            content: '';
+            display: block;
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #fff;
+            transition: width 0.3s ease;
+            pointer-events: none;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            color: #fff;
+        }
+
+        .navbar .nav-link.active {
+            color: #fff;
+        }
+
+        .navbar .nav-link.active::after {
+            background-color: #fff;
+        }
+
+        .navbar.scrolled .nav-link.active {
+            color: #fff;
+        }
+
+        .navbar.scrolled .nav-link.active::after {
+            background-color: #fff;
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                background: rgba(0, 0, 0, 0.95);
+                padding: 1rem 0;
+                box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+            }
+            .nav-menu.active {
+                display: flex;
+            }
+            .nav-item {
+                margin: 10px 0;
+                text-align: center;
+                width: 100%;
+            }
+            .nav-link {
+                width: 100%;
+                display: block;
+                padding: 12px;
+                color: #fff;
+            }
+            .nav-link:hover, .nav-link.active {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: #fff;
+            }
+            .nav-link::after {
+                display: none;
+            }
+            .nav-toggle {
+                display: block;
+            }
+            .navbar.scrolled .nav-menu {
+                background: rgba(0, 0, 0, 0.95);
+            }
+        }
+
+        /* Adjust container padding to account for fixed navbar */
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 100px 0 120px 0; /* Increased bottom padding for more length */
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            color: #000;
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 300;
+        }
+        h1 { font-size: 3.5rem; }
+        h2 {
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #000;
+        }
+        h2 .section-number {
+            font-size: 0.6em;
+            color: #000;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        h3 { font-size: 1.8rem; color: #000; }
+        h4 { font-size: 1.4rem; text-transform: none; letter-spacing: 0.5px;}
+        h5 { font-size: 1.1rem; }
+        h6 { font-size: 1rem; }
+        p {
+            margin-bottom: 1.2rem;
+            color: #000;
+            font-size: 1.05rem;
+        }
+
+        /* Equipment Section Styles */
+        .equipment-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            gap: 30px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .equipment-section.reverse {
+            flex-direction: row-reverse;
+        }
+        .equipment-description {
+            flex: 1.2;
+        }
+        .equipment-description h2 {
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 1.2rem;
+        }
+        .equipment-description p {
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        .equipment-image {
+            flex: 0.8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .equipment-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            max-height: 250px;
+            object-fit: contain;
+        }
+        @media (max-width: 900px) {
+            .equipment-section, .equipment-section.reverse {
+                flex-direction: column !important;
+                gap: 20px;
+            }
+            .equipment-image img {
+                max-height: 200px;
+            }
+        }
+        
+        /* Studovna Section Styles */
+        .studovna-wrapper {
+            background: #fff;
+            border-radius: 12px;
+            padding: 40px;
+            margin-top: 60px;
+        }
+        .studovna-wrapper .main-title {
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #1a1a1a;
+        }
+
+        /* New Card Grid Design */
+        .studovna-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        @media (max-width: 1200px) {
+            .studovna-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 600px) {
+            .studovna-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .studovna-card {
+            background: #fff;
+            border-radius: 8px;
+            border: 1.5px solid #000;
+            box-shadow: none;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            aspect-ratio: 4/3;
+            overflow: hidden;
+        }
+        .studovna-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .studovna-card-img-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .studovna-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .studovna-card-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            color: white;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        /* New Modal/Popup Design */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.7);
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 4% auto;
+            padding: 20px 40px 40px 40px;
+            border-radius: 8px;
+            width: 85%;
+            max-width: 800px;
+            position: relative;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+        }
+        .close-button {
+            color: #888;
+            position: absolute;
+            top: 10px;
+            right: 25px;
+            font-size: 35px;
+            font-weight: 300;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-button:hover {
+            color: #000;
+        }
+        .modal-header h2 {
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            color: #1a1a1a;
+        }
+        .modal-body {
+            padding: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-body p {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .info-item {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            align-items: center;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        .info-item-img {
+            flex: 1 1 100%;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .info-item-img img {
+            width: 100%;
+            max-width: 100%;
+            border-radius: 6px;
+            object-fit: contain;
+        }
+        .info-item-text {
+            flex: 2 1 300px;
+        }
+        .info-item-text h3 {
+            font-size: 1.6rem;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .modal-body ul {
+             list-style-type: none;
+             padding: 0;
+        }
+        .modal-body ul li {
+            margin-bottom: 0.7rem;
+            font-size: 1rem;
+        }
+        .modal-body ul li strong {
+            display: inline-block;
+            width: 150px;
+            font-weight: 500;
+            color: #000;
+        }
+
+        .attack-section {
+            margin-bottom: 30px;
+        }
+
+        .attack-section h3 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .attack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .attack-item {
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .attack-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .attack-image-placeholder {
+            background: #fff !important;
+            border-radius: 6px;
+            padding: 0;
+            margin-bottom: 12px;
+            font-weight: 500;
+            color: #333;
+            font-size: 1rem;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .attack-image-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+
+        .attack-item p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* Stance Styles */
+        .stance-section {
+            margin-bottom: 40px;
+        }
+
+        .stance-intro {
+            font-size: 1.1rem;
+            color: #444;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .stance-section h3 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .stance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .stance-item {
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .stance-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .stance-image-placeholder {
+            background: #fff !important;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 15px;
+            font-weight: 500;
+            color: #333;
+            font-size: 1.1rem;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stance-item p {
+            margin: 0;
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* Technique Styles */
+        .technique-intro {
+            margin-bottom: 30px;
+        }
+
+        .technique-intro p {
+            font-size: 1.1rem;
+            color: #444;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .technique-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .technique-item {
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .technique-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .technique-image-placeholder {
+            background: #fff !important;
+            border-radius: 6px;
+            padding: 0;
+            margin-bottom: 15px;
+            font-weight: 500;
+            color: #333;
+            font-size: 1.2rem;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .technique-image-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+
+        .technique-item h3 {
+            font-size: 1.3rem;
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .technique-item p {
+            margin: 0;
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* Dictionary Styles */
+        .dictionary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px 0;
+        }
+
+        .dictionary-section {
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .dictionary-section h3 {
+            font-size: 1.3rem;
+            color: #333;
+            margin: 0 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .dictionary-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dictionary-section li {
+            margin-bottom: 10px;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .dictionary-section li:last-child {
+            margin-bottom: 0;
+        }
+
+        .dictionary-section li strong {
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* Video Section Styles */
+        .video-section {
+            margin-bottom: 30px;
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .video-section h3 {
+            font-size: 1.3rem;
+            color: #333;
+            margin: 0 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .video-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .video-section li {
+            margin-bottom: 12px;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .video-section li:last-child {
+            margin-bottom: 0;
+        }
+
+        .video-section a {
+            color: #2c5282;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .video-section a:hover {
+            color: #1a365d;
+            text-decoration: underline;
+        }
+
+        /* Exam Section Styles */
+        .exam-section {
+            margin-bottom: 40px;
+        }
+
+        .exam-section h3 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .kyu-grid, .dan-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            align-items: start;
+        }
+
+        .kyu-item, .dan-item {
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            height: fit-content;
+        }
+
+        .kyu-item:hover, .dan-item:hover {
+            background: #f0f0f0;
+        }
+
+        .kyu-item h4, .dan-item h4 {
+            font-size: 1.5rem;
+            color: #333;
+            margin: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .kyu-item h4:after, .dan-item h4:after {
+            content: "+";
+            font-size: 1.8rem;
+            color: #666;
+            transition: transform 0.3s;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .kyu-item.active h4:after, .dan-item.active h4:after {
+            transform: rotate(45deg);
+        }
+
+        .kyu-content, .dan-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            opacity: 0;
+        }
+
+        .kyu-item.active .kyu-content, .dan-item.active .dan-content {
+            max-height: 2000px;
+            opacity: 1;
+            transition: max-height 0.5s ease-in, opacity 0.3s ease-in;
+        }
+
+        .kyu-image-placeholder, .dan-image-placeholder {
+            background: #fff !important;
+            border-radius: 6px;
+            padding: 0;
+            margin-bottom: 15px;
+            font-weight: 500;
+            color: #333;
+            font-size: 1.2rem;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .kyu-image-placeholder::before, .dan-image-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%, #f0f0f0),
+                        linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%, #f0f0f0);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            opacity: 0.5;
+        }
+
+        .kyu-image-placeholder::after, .dan-image-placeholder::after {
+            content: attr(data-text);
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .kyu-techniques, .dan-techniques {
+            padding-top: 15px;
+        }
+
+        .kyu-techniques h5, .dan-techniques h5 {
+            font-size: 1.3rem;
+            color: #333;
+            margin: 0 0 10px 0;
+        }
+
+        .kyu-techniques h6, .dan-techniques h6 {
+            font-size: 1.1rem;
+            color: #444;
+            margin: 15px 0 5px 0;
+        }
+
+        .kyu-techniques ul, .dan-techniques ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 10px 0;
+        }
+
+        .kyu-techniques li, .dan-techniques li {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 5px;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .kyu-techniques li:before, .dan-techniques li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #999;
+        }
+
+        .note {
+            font-size: 0.9rem;
+            color: #666;
+            font-style: italic;
+            margin: 5px 0;
+        }
+
+        .important {
+            font-size: 0.9rem;
+            color: #d32f2f;
+            font-weight: 500;
+            margin: 5px 0;
+        }
+
+        /* Add styles for the steps */
+        .steps-container {
+            margin: 20px 0;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 15px;
+            transition: transform 0.2s;
+        }
+
+        .step:hover {
+            transform: translateX(5px);
+            background: #f0f0f0;
+        }
+
+        .step-number {
+            background: #333;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content p {
+            margin: 0;
+            font-size: 1.1rem;
+            color: #444;
+            line-height: 1.4;
+        }
+
+        .tips {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+
+        .tips h4 {
+            color: #333;
+            margin: 0 0 15px 0;
+            font-size: 1.2rem;
+        }
+
+        .tips ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .tips li {
+            margin-bottom: 8px;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .tips li:last-child {
+            margin-bottom: 0;
+        }
+
+        .technique-item, .stance-item, .attack-item, .dictionary-section, .video-section {
+            background: #fff !important;
+            border-radius: 8px;
+            border: 1.5px solid #000;
+            box-shadow: none !important;
+        }
+
+        .contact-section {
+            text-align: center;
+            margin-top: 5px; /* reduced space from cards to section */
+            margin-bottom: 80px; /* space from button to footer */
+        }
+
+        .contact-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            letter-spacing: 0.18em;
+            font-weight: 400;
+            margin-bottom: 18px;
+        }
+
+        .contact-desc {
+            font-size: 1.15rem;
+            color: #444;
+            margin-bottom: 32px;
+        }
+
+        .contact-btn {
+            display: inline-block;
+            background: #000;
+            color: #fff;
+            font-family: 'Montserrat',sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.12em;
+            padding: 18px 48px;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+            transition: background 0.2s, color 0.2s;
+            font-weight: 400;
+        }
+
+        @media (max-width: 600px) {
+          .loading-screen {
+            min-height: 100vh;
+            min-width: 100vw;
+            padding: 0;
+            box-sizing: border-box;
+          }
+          .loading-logo {
+            width: 100px;
+            height: 100px;
+          }
+          .loading-text {
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 0 10px;
+          }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen">
+        <img src="https://i.postimg.cc/90JTbPSF/abc.png" alt="Loading Logo" class="loading-logo">
+        <div class="loading-text">Načítání</div>
+    </div>
+
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="Homepage.html" class="nav-logo">Ronin Dojo</a>
+            <button class="nav-toggle" id="nav-toggle" aria-label="Menu Toggle">
+                ☰
+            </button>
+            <ul class="nav-menu" id="nav-menu">
+                <li class="nav-item"><a href="Homepage.html#about" class="nav-link">O nás</a></li>
+                <li class="nav-item"><a href="Homepage.html#trainings" class="nav-link">Tréninky</a></li>
+                <li class="nav-item"><a href="Homepage.html#team" class="nav-link">Tým</a></li>
+                <li class="nav-item"><a href="Homepage.html#pricing" class="nav-link">Ceník</a></li>
+                <li class="nav-item"><a href="Homepage.html#gallery" class="nav-link">Galerie</a></li>
+                <li class="nav-item"><a href="Homepage.html#downloads" class="nav-link">Ke stažení</a></li>
+                <li class="nav-item"><a href="Homepage.html#faq" class="nav-link">FAQ</a></li>
+                <li class="nav-item"><a href="Homepage.html#contact" class="nav-link">Kontakt</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 data-aos="fade-up" style="text-align:center;">Vybavení Aikidisty</h1>
+        
+        <div class="equipment-section" data-aos="fade-up" data-aos-delay="100">
+            <div class="equipment-description">
+                <h2>Kimono (Gi)</h2>
+                <p>Kimono, nebo správněji gi, je základní oděv každého aikidisty. Je vyrobeno z pevné bavlny, aby vydrželo náročné tréninky a časté pády. Bílé kimono symbolizuje čistotu a začátečnickou mysl.</p>
+            </div>
+            <div class="equipment-image">
+                <img src="https://i.postimg.cc/xd0tdfCQ/kimono.png" alt="Kimono (Gi)" data-aos="zoom-in" data-aos-delay="150">
+            </div>
+        </div>
+        <div class="equipment-section reverse" data-aos="fade-up" data-aos-delay="200">
+            <div class="equipment-description">
+                <h2>Bokken</h2>
+                <p>Bokken je dřevěný meč používaný k nácviku technik s mečem (kenjutsu) v aikidu. Pomáhá rozvíjet správné držení těla, vzdálenost a načasování útoků i obran.</p>
+            </div>
+            <div class="equipment-image">
+                <img src="https://i.postimg.cc/GmnXZJnH/boken.png" alt="Bokken" data-aos="zoom-in" data-aos-delay="150">
+            </div>
+        </div>
+        <div class="equipment-section" data-aos="fade-up" data-aos-delay="300">
+            <div class="equipment-description">
+                <h2>Jo</h2>
+                <p>Jo je dřevěná tyč o délce přibližně 128 cm. V aikidu se používá k nácviku technik s tyčí (jojutsu) a rozvíjí koordinaci, pohyb a práci s partnerem na delší vzdálenost.</p>
+            </div>
+            <div class="equipment-image">
+                <img src="https://i.postimg.cc/g2ygdXG4/jo.png" alt="Jo" data-aos="zoom-in" data-aos-delay="150">
+            </div>
+        </div>
+        <div class="equipment-section reverse">
+            <div class="equipment-description">
+                <h2>Tanto</h2>
+                <p>Tanto je dřevěný nůž, který slouží k bezpečnému nácviku obrany proti ozbrojenému útoku. Učí přesnosti, rychlosti a správné reakci na hrozbu.</p>
+            </div>
+            <div class="equipment-image">
+                <img src="https://i.postimg.cc/L5ZVWhyt/tanto.png" alt="Tanto" data-aos="zoom-in" data-aos-delay="150">
+            </div>
+        </div>
+        <div class="equipment-section">
+            <div class="equipment-description">
+                <h2>Hakama</h2>
+                <p>Hakama jsou tradiční japonské kalhoty, které nosí pokročilí studenti a instruktoři. Symbolizují pokoru, respekt a tradici v bojových uměních.</p>
+            </div>
+            <div class="equipment-image">
+                <img src="https://i.postimg.cc/SNCB2KyY/hakama.png" alt="Hakama" data-aos="zoom-in" data-aos-delay="150">
+            </div>
+        </div>
+
+        <div class="studovna-wrapper" data-aos="fade-up">
+            <h1 class="main-title">Studovna</h1>
+
+            <div class="studovna-grid">
+                <div class="studovna-card" data-modal="pasek-modal" data-aos="fade-up" data-aos-delay="100"><div class="studovna-card-img-wrapper"><img src="https://i.postimg.cc/RCTjVs45/pasek.jpg" alt="Zavazování pásku"></div><div class="studovna-card-title">Jak vázat pásek</div></div>
+                <div class="studovna-card" data-modal="postoje-modal" data-aos="fade-up" data-aos-delay="200"><div class="studovna-card-img-wrapper"><img src="https://i.postimg.cc/RVbJ9Nwf/pokrocili-2.jpg" alt="Postoje"></div><div class="studovna-card-title">Postoje</div></div>
+                <div class="studovna-card" data-modal="utoky-modal" data-aos="fade-up" data-aos-delay="300"><div class="studovna-card-img-wrapper"><img src="https://i.postimg.cc/4yf1n1ZB/waza.jpg" alt="Útoky"></div><div class="studovna-card-title">Útoky</div></div>
+                <div class="studovna-card" data-modal="katame-waza-modal"><div class="studovna-card-img-wrapper"><img src="https://i.postimg.cc/FKSp6RDg/paka.jpg" alt="Katame waza"></div><div class="studovna-card-title">Katame waza</div></div>
+                <div class="studovna-card" data-modal="nage-waza-modal"><div class="studovna-card-img-wrapper"><img src="https://i.postimg.cc/BnrRDnc1/hero-image.jpg" alt="Nage waza"></div><div class="studovna-card-title">Nage waza</div></div>
+                <div class="studovna-card" data-modal="zkouskovy-rad-modal"><div class="studovna-card-img-wrapper"><img src="https://i.postimg.cc/k5kbkvBB/zkousky.jpg" alt="Zkouškový řád"></div><div class="studovna-card-title">Zkouškový řád</div></div>
+                <div class="studovna-card" data-modal="slovnicek-modal"><div class="studovna-card-img-wrapper"><img src="http://www.aikido-klub-praha.cz/wp-content/uploads/2012/02/slovn%C3%AD%C4%8Dek-pojm%C5%AF.png" alt="Slovníček pojmů"></div><div class="studovna-card-title">Slovníček pojmů</div></div>
+                <div class="studovna-card" data-modal="videoteka-modal"><div class="studovna-card-img-wrapper"><img src="https://i.postimg.cc/Prr0LW5L/videoteka.jpg" alt="Videotéka"></div><div class="studovna-card-title">Videotéka</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pasek-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="modal-header">
+                <h2>Jak správně vázat pásek (Obi)</h2>
+            </div>
+            <div class="modal-body">
+                <div class="info-item">
+                    <div class="info-item-img">
+                        <img src="https://i.postimg.cc/KvxQZ78V/vazani-obi-02.gif" alt="Vázání pásku">
+                    </div>
+                    <div class="info-item-text">
+                        <h3>Postup vázání pásku</h3>
+                        <div class="steps-container">
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <p>Omotat pásek kolem sebe (zleva doprava)</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <p>Konec, který je nahoře, protáhnout spodem (přes všechny vrstvy)</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <p>Konec, který je nyní dole, prostrčit horem (přes všechny vrstvy)</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <p>Volný konec obi se prostrčí vzniklým otvorem</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">5</div>
+                                <div class="step-content">
+                                    <p>Dotáhneme a urovnáme pásek</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tips">
+                            <h4>Tipy pro správné vázání:</h4>
+                            <ul>
+                                <li>Pásek by měl být dostatečně dlouhý (cca 2.5x obvod pasu)</li>
+                                <li>Uzly by měly být pevné, ale ne příliš utažené</li>
+                                <li>Pásek by měl být rovnoměrně rozložený kolem pasu</li>
+                                <li>Uzel by měl být umístěn ve středu zad</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="postoje-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="modal-header">
+                <h2>Postoje (Kamae)</h2>
+            </div>
+            <div class="modal-body">
+                <div class="stance-section">
+                    <h3>Základní postoj - HANMI</h3>
+                    <p class="stance-intro">Základem je HANMI, základní postoj. Podle toho, která noha je vepředu rozlišujeme pravé a levé hanmi.</p>
+                    <div class="stance-grid">
+                        <div class="stance-item">
+                            <img src="https://i.postimg.cc/50QKCfhR/wsb-222x291-r-hanmi.jpg" alt="Pravé Hanmi" class="stance-image">
+                            <p>Pravý postoj - pravá noha vpředu</p>
+                        </div>
+                        <div class="stance-item">
+                            <img src="https://i.postimg.cc/wBvG9X0H/wsb-220x298-l-hamni.jpg" alt="Levé Hanmi" class="stance-image">
+                            <p>Levý postoj - levá noha vpředu</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stance-section">
+                    <h3>Základní typy postojů</h3>
+                    <div class="stance-grid">
+                        <div class="stance-item">
+                            <img src="https://i.postimg.cc/13MdxC0J/0-Suwari-waza.jpg" alt="Suwari Waza" class="stance-image">
+                            <p>Oba partneři na kolenou</p>
+                        </div>
+                        <div class="stance-item">
+                            <img src="https://i.postimg.cc/fbrgyVrd/0-Hanmi-Hantachi-waza.jpg" alt="Hanmi Hantachi Waza" class="stance-image">
+                            <p>Jeden partner na kolenou a druhý ve stoje</p>
+                        </div>
+                        <div class="stance-item">
+                            <img src="https://i.postimg.cc/90GxLJFP/0-Tachi-waza.jpg" alt="Tachi Waza" class="stance-image">
+                            <p>Oba partneři jsou ve stoje</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="utoky-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="modal-header">
+                <h2>Útoky</h2>
+            </div>
+            <div class="modal-body">
+                <div class="attack-section">
+                    <h3>Úchopy (DORI)</h3>
+                    <div class="attack-grid">
+                        <div class="attack-item">
+                            <div class="attack-image-placeholder">
+                                <img src="https://i.postimg.cc/VvyG931L/22-katate-dorikosa-dori-1.gif" alt="KATATE DORI">
+                            </div>
+                            <p>KATATE DORI - Úchop za zápěstí, zrcadlový postoj</p>
+                        </div>
+                        <div class="attack-item">
+                            <div class="attack-image-placeholder">
+                                <img src="https://i.postimg.cc/65Xb8JYM/23-morote-dori-1.jpg" alt="MOROTE DORI">
+                            </div>
+                            <p>MOROTE DORI - Úchop oběma rukama za ruku partnera</p>
+                        </div>
+                        <div class="attack-item">
+                            <div class="attack-image-placeholder">
+                                <img src="https://i.postimg.cc/MZRrZKbc/24-kata-dorikata-dori-menuchi-1.gif" alt="KATA DORI MENUCHI">
+                            </div>
+                            <p>KATA DORI MENUCHI - Úchop za rameno, kombinovaný se sekem na hlavu</p>
+                        </div>
+                        <div class="attack-item">
+                            <div class="attack-image-placeholder">
+                                <img src="https://i.postimg.cc/X7kHFHP4/25-ryo-kata-dorimuna-dori-1.gif" alt="RYO KATA DORI">
+                            </div>
+                            <p>RYO KATA DORI - Úchop za obě ramena</p>
+                        </div>
+                        <div class="attack-item">
+                            <div class="attack-image-placeholder">
+                                <img src="https://i.postimg.cc/dVQW9RMd/26-usiro-ryote-doriushiro-ryohiji-dori.gif" alt="USHIRO RYOTE DORI">
+                            </div>
+                            <p>USHIRO RYOTE DORI - Úchop zezadu za obě zápěstí</p>
+                        </div>
+                        <div class="attack-item">
+                            <div class="attack-image-placeholder">
+                                <img src="https://i.postimg.cc/zGdx2L5Q/27-usiro-ryokata-doriushiro-eridori.gif" alt="USHIRO RYO KATA DORI">
+                            </div>
+                            <p>USHIRO RYO KATA DORI - Úchop zezadu oběma rukama za ramena</p>
+                        </div>
+                        <div class="attack-item">
+                            <div class="attack-image-placeholder">
+                                <img src="https://i.postimg.cc/vmc3JQZZ/28-ushiro-katate-dori-kubishime.gif" alt="USHIRO KATATE DORI KUBISHIME">
+                            </div>
+                            <p>USHIRO KATATE DORI KUBISHIME - Úchop zezadu za zápěstí, spojený se škrcením</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="attack-section">
+                    <h3>Údery a Kopy (UCHI, TSUKI a GERI)</h3>
+                    <div class="attack-grid">
+                        <div class="attack-item">
+                            <div class="attack-image-placeholder">
+                                <img src="https://i.postimg.cc/7LdmDp5M/31-shomen-uchijokomen-uchi-1.gif" alt="SHOMEN UCHI">
+                            </div>
+                            <p>SHOMEN UCHI - Přímý, rovný sek na hlavu</p>
+                        </div>
+                        <div class="attack-item">
+                            <div class="attack-image-placeholder">
+                                <img src="https://i.postimg.cc/sXWK2wSF/32-chudan-tsukijodan-tsuki-1.gif" alt="CHUDAN TSUKI">
+                            </div>
+                            <p>CHUDAN TSUKI - Úder pěstí na střední pásmo</p>
+                        </div>
+                        <div class="attack-item">
+                            <div class="attack-image-placeholder">
+                                <img src="https://i.postimg.cc/hvqsQTbX/33-mae-geri.gif" alt="MAE GERI">
+                            </div>
+                            <p>MAE GERI - Přímý kop</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="katame-waza-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="modal-header">
+                <h2>Katame Waza (Techniky páčení)</h2>
+            </div>
+            <div class="modal-body">
+                <div class="technique-intro">
+                    <p>KATAME WAZA - jedná se o techniky páčení, které využívají páky na kloubech</p>
+                </div>
+                <div class="technique-grid">
+                    <div class="technique-item">
+                        <div class="technique-image-placeholder">
+                            <img src="https://i.postimg.cc/65Zzw9RH/11-Ikkyo.jpg" alt="IKKYO">
+                        </div>
+                        <h3>IKKYO</h3>
+                        <p>Páka na loket</p>
+                    </div>
+                    <div class="technique-item">
+                        <div class="technique-image-placeholder">
+                            <img src="https://i.postimg.cc/sgRmgt43/12-nikyo.jpg" alt="NIKYO">
+                        </div>
+                        <h3>NIKYO</h3>
+                        <p>Páka na zápěstí, kroutivým pohybem směrem k zemi</p>
+                    </div>
+                    <div class="technique-item">
+                        <div class="technique-image-placeholder">
+                            <img src="https://i.postimg.cc/vZLzg30f/13-Sankyo.jpg" alt="SANKYO">
+                        </div>
+                        <h3>SANKYO</h3>
+                        <p>Páka na zápěstí, kroutivým pohybem proti ose oponenta</p>
+                    </div>
+                    <div class="technique-item">
+                        <div class="technique-image-placeholder">
+                            <img src="https://i.postimg.cc/PqXMmY7c/14-Yonkyo.jpg" alt="YONKYO">
+                        </div>
+                        <h3>YONKYO</h3>
+                        <p>Páka na předloktí</p>
+                    </div>
+                    <div class="technique-item">
+                        <div class="technique-image-placeholder">
+                            <img src="https://i.postimg.cc/CKcsJdTK/15-Gokyo.jpg" alt="GOKYO">
+                        </div>
+                        <h3>GOKYO</h3>
+                        <p>Páka na loket, zpravidla se používá pouze proti noži</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="nage-waza-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="modal-header">
+                <h2>Nage Waza (Techniky hodů)</h2>
+            </div>
+            <div class="modal-body">
+                <div class="technique-intro">
+                    <p>NAGE WAZA - jedná se o techniky hodů, které využívají pohyb a energii partnera</p>
+                </div>
+                <div class="technique-grid">
+                    <div class="technique-item">
+                        <div class="technique-image-placeholder">
+                            <img src="https://i.postimg.cc/D0LsVwDL/40-Kokyu-ho.jpg" alt="KOKYU HO">
+                        </div>
+                        <h3>KOKYU HO</h3>
+                        <p>Základní cvičení dechu a energie</p>
+                    </div>
+                    <div class="technique-item">
+                        <div class="technique-image-placeholder">
+                            <img src="https://i.postimg.cc/GmcDNrjT/41-Kokyu-nage.png" alt="KOKYU NAGE">
+                        </div>
+                        <h3>KOKYU NAGE</h3>
+                        <p>Hod dechem - využívá bodu nestability protivníka</p>
+                    </div>
+                    <div class="technique-item">
+                        <div class="technique-image-placeholder">
+                            <img src="https://i.postimg.cc/66vC4M3q/42-Irimi-nage.jpg" alt="IRIMI NAGE">
+                        </div>
+                        <h3>IRIMI NAGE</h3>
+                        <p>Hod krokem - využívá kroku za linii partnera</p>
+                    </div>
+                    <div class="technique-item">
+                        <div class="technique-image-placeholder">
+                            <img src="https://i.postimg.cc/WbcgG0Fn/43-Shiho-nage.jpg" alt="SHIHO NAGE">
+                        </div>
+                        <h3>SHIHO NAGE</h3>
+                        <p>Hod do všech směrů - využívá páky na ruku</p>
+                    </div>
+                    <div class="technique-item">
+                        <div class="technique-image-placeholder">
+                            <img src="https://i.postimg.cc/kXN8fDWd/44-Tenchi-nage.jpg" alt="TENCHI NAGE">
+                        </div>
+                        <h3>TENCHI NAGE</h3>
+                        <p>Hod Nebe a Země - využívá roztažení rukou</p>
+                    </div>
+                    <div class="technique-item">
+                        <div class="technique-image-placeholder">
+                            <img src="https://i.postimg.cc/dV4CcXWH/46-Koshi-nage.jpg" alt="KOSHI NAGE">
+                        </div>
+                        <h3>KOSHI NAGE</h3>
+                        <p>Hod boky - využívá boků k vychýlení partnera</p>
+                    </div>
+                    <div class="technique-item">
+                        <div class="technique-image-placeholder">
+                            <img src="https://i.postimg.cc/25yZkwMz/47-Kaiten-nage.jpg" alt="KAITEN NAGE">
+                        </div>
+                        <h3>KAITEN NAGE</h3>
+                        <p>Hod rotací - využívá kruhového pohybu</p>
+                    </div>
+                    <div class="technique-item">
+                        <div class="technique-image-placeholder">
+                            <img src="https://i.postimg.cc/d0fTLCcG/49-Ude-kime-nage.jpg" alt="UDEKIME NAGE">
+                        </div>
+                        <h3>UDEKIME NAGE</h3>
+                        <p>Hod pákou - využívá páky na loket</p>
+                    </div>
+                    <div class="technique-item">
+                        <div class="technique-image-placeholder">
+                            <img src="https://i.postimg.cc/0QJKmN9F/54-Hiji-kime-osae.jpg" alt="HIJI KIME OSAE">
+                        </div>
+                        <h3>HIJI KIME OSAE</h3>
+                        <p>Znehybnění lokte - využívá páky na loket</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="zkouskovy-rad-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="modal-header">
+                <h2>Zkouškový řád</h2>
+            </div>
+            <div class="modal-body">
+                <div class="exam-section">
+                    <h3>Základní stupně (9. - 6. kyu)</h3>
+                    <div class="kyu-grid">
+                        <div class="kyu-item">
+                            <h4>9. KYU</h4>
+                            <div class="kyu-content">
+                                <h5 class="kyu-label">9. KYU</h5>
+                                <div class="kyu-techniques">
+                                    <h5>TAI JUTSU</h5>
+                                    <h6>TACHI WAZA:</h6>
+                                    <ul>
+                                        <li>hanmi, ukemi, shiko</li>
+                                    </ul>
+                                    <h6>KATAME WAZA:</h6>
+                                    <ul>
+                                        <li>Shomen Uchi x Ikkyo (omote+ura)</li>
+                                    </ul>
+                                    <h6>Teorie</h6>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kyu-item">
+                            <h4>8. KYU</h4>
+                            <div class="kyu-content">
+                                <h5 class="kyu-label">8. KYU</h5>
+                                <div class="kyu-techniques">
+                                    <h5>TAI JUTSU</h5>
+                                    <h6>TACHI WAZA:</h6>
+                                    <ul>
+                                        <li>hanmi, ukemi, shiko</li>
+                                    </ul>
+                                    <h6>KATAME WAZA:</h6>
+                                    <ul>
+                                        <li>Shomen Uchi x Ikkyo (omote+ura)</li>
+                                    </ul>
+                                    <h6>NAGE WAZA:</h6>
+                                    <ul>
+                                        <li>Shomen Uchi x Irimi Nage</li>
+                                        <li>Shomen Uchi x Kiri Otoshi</li>
+                                    </ul>
+                                    <h6>Vázání obi (pásku)</h6>
+                                    <h6>Teorie</h6>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kyu-item">
+                            <h4>7. KYU</h4>
+                            <div class="kyu-content">
+                                <h5 class="kyu-label">7. KYU</h5>
+                                <div class="kyu-techniques">
+                                    <h5>TAI JUTSU</h5>
+                                    <h6>TACHI WAZA:</h6>
+                                    <ul>
+                                        <li>hanmi, ukemi, shiko</li>
+                                    </ul>
+                                    <h6>KATAME WAZA:</h6>
+                                    <ul>
+                                        <li>Shomen Uchi x Ikkyo (omote+ura)</li>
+                                    </ul>
+                                    <h6>NAGE WAZA:</h6>
+                                    <ul>
+                                        <li>Shomen Uchi x Irimi Nage</li>
+                                        <li>Shomen Uchi x Kiri Otoshi</li>
+                                    </ul>
+                                    <h6>SUWARI WAZA:</h6>
+                                    <ul>
+                                        <li>Ryokata Dori x Kokyu Ho</li>
+                                    </ul>
+                                    <h6>BUKI WAZA</h6>
+                                    <ul>
+                                        <li>Jo suburi 1-5</li>
+                                    </ul>
+                                    <h6>Počítání 1 - 10</h6>
+                                    <h6>Teorie</h6>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kyu-item">
+                            <h4>6. KYU</h4>
+                            <div class="kyu-content">
+                                <h5 class="kyu-label">6. KYU</h5>
+                                <div class="kyu-techniques">
+                                    <h5>TAI JUTSU</h5>
+                                    <h6>TACHI WAZA:</h6>
+                                    <ul>
+                                        <li>hanmi, ukemi</li>
+                                    </ul>
+                                    <h6>KATAME WAZA:</h6>
+                                    <ul>
+                                        <li>Shomen Uchi x Ikkyo (omote+ura)</li>
+                                    </ul>
+                                    <h6>NAGE WAZA:</h6>
+                                    <ul>
+                                        <li>Morote Dori x Kokyu Ho</li>
+                                    </ul>
+                                    <h6>SUWARI WAZA:</h6>
+                                    <ul>
+                                        <li>Shomen Uchi x Ikkyo (omote+ura)</li>
+                                    </ul>
+                                    <h6>BUKI WAZA</h6>
+                                    <ul>
+                                        <li>Jo suburi 1-5</li>
+                                        <li>Roku No Jo</li>
+                                    </ul>
+                                    <h6>Počítání 1 - 31</h6>
+                                    <h6>Teorie</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exam-section">
+                    <h3>Střední stupně (6. - 1. kyu)</h3>
+                    <div class="kyu-grid">
+                        <div class="kyu-item">
+                            <h4>5. KYU</h4>
+                            <div class="kyu-content">
+                                <h5 class="kyu-label">5. KYU</h5>
+                                <div class="kyu-techniques">
+                                    <h5>TAI JUTSU</h5>
+                                    <h6>TACHI WAZA</h6>
+                                    <ul>
+                                        <li>hanmi, tai sabaki, ukemi</li>
+                                    </ul>
+                                    <h6>AIKI TAISO:</h6>
+                                    <ul>
+                                        <li>katate dori x tai no henko (kihon+ki no nagan)</li>
+                                        <li>morote dori x kokyu ho</li>
+                                    </ul>
+                                    <h6>KATAME WAZA:</h6>
+                                    <ul>
+                                        <li>katate dori x ikkyo (omote+ura)</li>
+                                        <li>shomen uchi x ikkyo (omote+ura)</li>
+                                    </ul>
+                                    <h6>NAGE WAZA:</h6>
+                                    <ul>
+                                        <li>katate dori x shiho nage (omote+ura)</li>
+                                        <li>shomen uchi x irimi nage</li>
+                                    </ul>
+                                    <h6>SUWARI WAZA:</h6>
+                                    <ul>
+                                        <li>ryote dori x kokyu ho</li>
+                                    </ul>
+                                    <h6>BUKI WAZA:</h6>
+                                    <ul>
+                                        <li>ken suburi 1-5</li>
+                                        <li>jo suburi 1-5</li>
+                                    </ul>
+                                    <p class="note">(+2 semináře)</p>
+                                    <p class="important">!!!!! 5. kyu je nutné udělat do 9 měsíců od nastoupení do Aikido klub Iwama-ryu !!!!!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kyu-item">
+                            <h4>4. KYU</h4>
+                            <div class="kyu-content">
+                                <h5 class="kyu-label">4. KYU</h5>
+                                <div class="kyu-techniques">
+                                    <h5>TAI JUTSU</h5>
+                                    <h6>TACHI WAZA</h6>
+                                    <h6>KATAME WAZA:</h6>
+                                    <ul>
+                                        <li>kata dori x ikkyo (omote+ura)</li>
+                                        <li>katate dori x nikyo (omote+ura)</li>
+                                        <li>shomen uchi x nikyo (omote+ura)</li>
+                                    </ul>
+                                    <h6>NAGE WAZA:</h6>
+                                    <ul>
+                                        <li>katate dori x kokyu ho</li>
+                                        <li>ryote dori x kokyu ho</li>
+                                        <li>ryote dori x shiho nage (omote+ura)</li>
+                                        <li>yokomen uchi x shiho nage (omoto+ura)</li>
+                                        <li>katate dori x irimi nage (chudan)</li>
+                                        <li>ryote dori x irimi nage (jodan)</li>
+                                    </ul>
+                                    <h6>SUWARI WAZA:</h6>
+                                    <ul>
+                                        <li>ryokata dori x kokyu ho</li>
+                                        <li>shomen uchi x ikkyo (omote+ura)</li>
+                                    </ul>
+                                    <h6>BUKI WAZA:</h6>
+                                    <ul>
+                                        <li>ken suburi 1-7</li>
+                                        <li>ken awase (migi+hidari)</li>
+                                        <li>jo suburi 1-10</li>
+                                        <li>roku no jo</li>
+                                    </ul>
+                                    <p class="note">(+4 semináře)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kyu-item">
+                            <h4>3. KYU</h4>
+                            <div class="kyu-content">
+                                <h5 class="kyu-label">3. KYU</h5>
+                                <div class="kyu-techniques">
+                                    <h5>AI JUTSU</h5>
+                                    <h6>TACHI WAZA</h6>
+                                    <h6>KATAME WAZA:</h6>
+                                    <ul>
+                                        <li>yokomen uchi x ikkyo (omote+ura)</li>
+                                        <li>kata dori x nikyo (omote+ura)</li>
+                                        <li>katate dori x sankyo (omote+ura)</li>
+                                        <li>shomen uchi x sankyo (omote+ura)</li>
+                                    </ul>
+                                    <h6>NAGE WAZA:</h6>
+                                    <ul>
+                                        <li>shomen uchi x shiho nage (omote+ura)</li>
+                                        <li>morote dori x shiho nage (omote+ura)</li>
+                                        <li>chudan tsuki x irimi nage</li>
+                                        <li>yokomen uchi x irimi nage</li>
+                                        <li>chudan tsuki x kote gaeshi</li>
+                                        <li>shomen uchi x kote gaeshi</li>
+                                        <li>katate dori x koshi nage</li>
+                                    </ul>
+                                    <h6>USHIRO WAZA:</h6>
+                                    <ul>
+                                        <li>ushiro ryote dori x ikkyo (omote+ura)</li>
+                                        <li>ushiro ryote dori x shiho nage (omote+ura)</li>
+                                    </ul>
+                                    <h6>SUWARI WAZA:</h6>
+                                    <ul>
+                                        <li>morote dori x kokyu ho</li>
+                                        <li>kata dori x ikkyo (omote+ura)</li>
+                                        <li>shomen uchi x nikyo (omote+ura)</li>
+                                    </ul>
+                                    <h6>BUKI WAZA:</h6>
+                                    <ul>
+                                        <li>happo giri</li>
+                                        <li>ken awase (go+schichi)</li>
+                                        <li>jo suburi 1-20</li>
+                                        <li>31 jo kata</li>
+                                    </ul>
+                                    <p class="note">(+6 seminářů)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kyu-item">
+                            <h4>2. KYU</h4>
+                            <div class="kyu-content">
+                                <h5 class="kyu-label">2. KYU</h5>
+                                <div class="kyu-techniques">
+                                    <h5>TAI JUTSU</h5>
+                                    <h6>TACHI WAZA</h6>
+                                    <h6>KATAME WAZA:</h6>
+                                    <ul>
+                                        <li>koza dori x ikkyo (omote+ura)</li>
+                                        <li>yokomen uchi x nikyo (omote+ura)</li>
+                                        <li>kata dori x sankyo (omote+ura)</li>
+                                        <li>katate dori x yonkyo (omote+ura)</li>
+                                        <li>shomen uchi x yonkyo (omote+ura)</li>
+                                    </ul>
+                                    <h6>NAGE WAZA:</h6>
+                                    <ul>
+                                        <li>ryokata dori x kokyu ho</li>
+                                        <li>shomen tsuki x shiho nage (omote+ura)</li>
+                                        <li>kata dori men uchi x shiho nage (omote+ura)</li>
+                                        <li>katate dori x kote gaeshi</li>
+                                        <li>ryote dori x koshi nage (2 způsoby)</li>
+                                        <li>katate dori x kaiten nage (uchi+soto)</li>
+                                    </ul>
+                                    <h6>USHIRO WAZA:</h6>
+                                    <ul>
+                                        <li>ushiro ryote dori x nikyo (omote+ura)</li>
+                                        <li>ushiro ryote dori x irimi nage</li>
+                                        <li>ushiro ryote dori x kote gaeshi</li>
+                                    </ul>
+                                    <h6>SUWARI WAZA:</h6>
+                                    <ul>
+                                        <li>yokomen uchi x ikkyo (omote+ura)</li>
+                                        <li>kata dori x nikyo (omote+ura)</li>
+                                        <li>shomen uchi x sankyo (omote+ura)</li>
+                                        <li>shomen uchi x yonkyo (omote+ura)</li>
+                                    </ul>
+                                    <h6>HANMI HANTACHI WAZA:</h6>
+                                    <ul>
+                                        <li>katate dori x shiho nage (omote)</li>
+                                        <li>shomen uchi x irimi nage</li>
+                                    </ul>
+                                    <h6>BUKI WAZA:</h6>
+                                    <ul>
+                                        <li>kumi tachi 1-2</li>
+                                        <li>kumi jo 1-2</li>
+                                        <li>13 jo kata</li>
+                                    </ul>
+                                    <p class="note">+ Přezkoušení technik minulých stupňů dle výběru zkoušejícího.</p>
+                                    <p class="note">(+8 seminářů)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kyu-item">
+                            <h4>1. KYU</h4>
+                            <div class="kyu-content">
+                                <h5 class="kyu-label">1. KYU</h5>
+                                <div class="kyu-techniques">
+                                    <h5>TAI JUTSU</h5>
+                                    <h6>TACHI WAZA</h6>
+                                    <h6>KATAME WAZA:</h6>
+                                    <ul>
+                                        <li>muna dori x ikkyo (omote+ura)</li>
+                                        <li>koza dori x nikyo (omote+ura)</li>
+                                        <li>ryote dori x nikyo (omote+ura)</li>
+                                        <li>yokomen uchi x sankyo (omote+ura)</li>
+                                        <li>muna dori x sankyo (omote+ura)</li>
+                                        <li>yokomen uchi x yonkyo (omote+ura)</li>
+                                        <li>yokomen uchi x gokyo (ura)</li>
+                                    </ul>
+                                    <h6>NAGE WAZA:</h6>
+                                    <ul>
+                                        <li>muna dori x shiho nage (omote+ura)</li>
+                                        <li>yokomen uchi x irimi nage</li>
+                                        <li>kata dori men uchi x irimi nage</li>
+                                        <li>yokomen uchi x kote gaeshi</li>
+                                        <li>shomen uchi x koshi nage</li>
+                                        <li>yokomen uchi x koshi nage</li>
+                                        <li>chudan tsuki x kaiten nage (soto)</li>
+                                        <li>ryote dori x tenchi nage</li>
+                                        <li>kata dori men uchi x ude kime nage</li>
+                                        <li>muna dori (men uchi) x juji nage</li>
+                                    </ul>
+                                    <h6>USHIRO WAZA:</h6>
+                                    <ul>
+                                        <li>ushiro ryote dori x sankyo (omote+ura)</li>
+                                        <li>ushiro ryote dori x irimi nage henka</li>
+                                        <li>ushiro ryote dori x koshi nage</li>
+                                        <li>ushiro ryote dori x juji nage</li>
+                                    </ul>
+                                    <h6>SUWARI WAZA:</h6>
+                                    <ul>
+                                        <li>yokomen uchi x ikkyo-yonkyo (omote+ura)</li>
+                                        <li>kata dori x ikkyo-yonkyo (omote+ura)</li>
+                                    </ul>
+                                    <h6>HANMI HANTACHI WAZA:</h6>
+                                    <ul>
+                                        <li>katate dori x kaiten nage (uchi+soto)</li>
+                                        <li>shomen uchi x kote gaeshi</li>
+                                    </ul>
+                                    <h6>JIYU WAZA:</h6>
+                                    <ul>
+                                        <li>1 útok 1 uke</li>
+                                    </ul>
+                                    <h6>BUKI WAZA:</h6>
+                                    <ul>
+                                        <li>kumi tachi 1-5</li>
+                                        <li>kumi jo 1-5</li>
+                                    </ul>
+                                    <p class="note">+ Přezkoušení technik minulých stupňů dle výběru zkoušejícího.</p>
+                                    <p class="note">(+10 seminářů)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exam-section">
+                    <h3>Mistrovské stupně (1. - 5. dan)</h3>
+                    <div class="dan-grid">
+                        <div class="dan-item">
+                            <h4>1. DAN</h4>
+                            <div class="dan-content">
+                                <h5 class="dan-label">1. DAN</h5>
+                                <div class="dan-techniques">
+                                    <h5>TAI JUTSU</h5>
+                                    <h6>TACHI WAZA</h6>
+                                    <h6>KATAME WAZA:</h6>
+                                    <ul>
+                                        <li>shomen uchi x ikkyo - yonkyo (omote+ura)</li>
+                                        <li>jokomen uchi x gokkyo</li>
+                                    </ul>
+                                    <h6>NAGE WAZA:</h6>
+                                    <ul>
+                                        <li>3 formy shio nage</li>
+                                        <li>3 formy irimi nage</li>
+                                        <li>3 formy kokyu nage</li>
+                                        <li>3 formy koshi nage</li>
+                                        <li>3 formy kote gayeshi</li>
+                                    </ul>
+                                    <h6>USHIRO WAZA:</h6>
+                                    <ul>
+                                        <li>3 formy</li>
+                                    </ul>
+                                    <h6>SUWARI WAZA:</h6>
+                                    <ul>
+                                        <li>jokomen uchi x ikkyo - gokyo (omote+ura)</li>
+                                    </ul>
+                                    <h6>HANMI HANTACHI WAZA:</h6>
+                                    <ul>
+                                        <li>3 formy</li>
+                                    </ul>
+                                    <h6>JIYU WAZA:</h6>
+                                    <ul>
+                                        <li>2 uke</li>
+                                    </ul>
+                                    <h6>BUKI WAZA:</h6>
+                                    <ul>
+                                        <li>(1. mokuroku)</li>
+                                        <li>ken suburi 1 - 5</li>
+                                        <li>migi no ken awase</li>
+                                        <li>hidari no ken awase</li>
+                                        <li>go no ken awase</li>
+                                        <li>shichi no ken awase</li>
+                                        <li>jo suburi 1- 20</li>
+                                    </ul>
+                                    <p class="note">+ Přezkoušení technik minulých stupňů dle výběru zkoušejícího</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dan-item">
+                            <h4>2. DAN</h4>
+                            <div class="dan-content">
+                                <h5 class="dan-label">2. DAN</h5>
+                                <div class="dan-techniques">
+                                    <h6>JIYU WAZA:</h6>
+                                    <ul>
+                                        <li>3 uke</li>
+                                    </ul>
+                                    <h6>BUKI WAZA:</h6>
+                                    <ul>
+                                        <li>1. mokuroku</li>
+                                        <li>(2. mokuroku)</li>
+                                        <li>31 jo kata</li>
+                                        <li>13 jo kata</li>
+                                    </ul>
+                                    <p class="note">+ Přezkoušení technik minulých stupňů dle výběru zkoušejícího</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dan-item">
+                            <h4>3. DAN</h4>
+                            <div class="dan-content">
+                                <h5 class="dan-label">3. DAN</h5>
+                                <div class="dan-techniques">
+                                    <h6>JIYU WAZA:</h6>
+                                    <ul>
+                                        <li>4 uke</li>
+                                    </ul>
+                                    <h6>BUKI WAZA:</h6>
+                                    <ul>
+                                        <li>1. - 2. mokuroku</li>
+                                        <li>(3. mokuroku)</li>
+                                        <li>happogiri</li>
+                                        <li>5 kumi tachi</li>
+                                        <li>kimusubi no tachi</li>
+                                    </ul>
+                                    <p class="note">+ Přezkoušení technik minulých stupňů dle výběru zkoušejícího</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dan-item">
+                            <h4>4. DAN</h4>
+                            <div class="dan-content">
+                                <h5 class="dan-label">4. DAN</h5>
+                                <div class="dan-techniques">
+                                    <h6>JIYU WAZA:</h6>
+                                    <ul>
+                                        <li>4 uke</li>
+                                    </ul>
+                                    <h6>BUKI WAZA:</h6>
+                                    <ul>
+                                        <li>1. - 3. mokuroku</li>
+                                        <li>(4. mokuroku)</li>
+                                        <li>31 kumi jo</li>
+                                    </ul>
+                                    <p class="note">+ Přezkoušení technik minulých stupňů dle výběru zkoušejícího</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dan-item">
+                            <h4>5. DAN</h4>
+                            <div class="dan-content">
+                                <h5 class="dan-label">5. DAN</h5>
+                                <div class="dan-techniques">
+                                    <h6>JIYU WAZA:</h6>
+                                    <ul>
+                                        <li>4 uke</li>
+                                    </ul>
+                                    <h6>BUKI WAZA:</h6>
+                                    <ul>
+                                        <li>1. - 4. mokuroku</li>
+                                        <li>(5. mokuroku)</li>
+                                        <li>10 kumi jo</li>
+                                    </ul>
+                                    <p class="note">+ Přezkoušení technik minulých stupňů dle výběru zkoušejícího</p>
+                                    <p class="note">ukázka Aikidó v režiji zkoušeného</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="slovnicek-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="modal-header">
+                <h2>Slovníček správného aikidisty</h2>
+            </div>
+            <div class="modal-body">
+                <div class="dictionary-grid">
+                    <div class="dictionary-section">
+                        <h3>Základní pojmy a pozdravy</h3>
+                        <ul>
+                            <li><strong>Úklona na začátku</strong> - onegaj šimas</li>
+                            <li><strong>Úklona na konci</strong> - domo arigato gozaj mašita</li>
+                            <li><strong>Začněte/prosím</strong> - dózo</li>
+                            <li><strong>Konec</strong> - jame/mate</li>
+                            <li><strong>Děkuji</strong> - domo arigato</li>
+                        </ul>
+                    </div>
+
+                    <div class="dictionary-section">
+                        <h3>Číslovky</h3>
+                        <ul>
+                            <li><strong>1</strong> - iči</li>
+                            <li><strong>2</strong> - ny</li>
+                            <li><strong>3</strong> - san</li>
+                            <li><strong>4</strong> - ší</li>
+                            <li><strong>5</strong> - go</li>
+                            <li><strong>6</strong> - rok</li>
+                            <li><strong>7</strong> - šiči</li>
+                            <li><strong>8</strong> - hači</li>
+                            <li><strong>9</strong> - kjů</li>
+                            <li><strong>10</strong> - džů</li>
+                        </ul>
+                    </div>
+
+                    <div class="dictionary-section">
+                        <h3>Vybavení a místa</h3>
+                        <ul>
+                            <li><strong>Kimono</strong> - gi</li>
+                            <li><strong>Tyč</strong> - džo</li>
+                            <li><strong>Meč</strong> - ken</li>
+                            <li><strong>Dřevěný meč</strong> - bokken</li>
+                            <li><strong>Pásek</strong> - obi</li>
+                            <li><strong>Tělocvična</strong> - dódžo</li>
+                            <li><strong>Oltář s fotkou</strong> - kamiza</li>
+                            <li><strong>Rákoska</strong> - kokoro</li>
+                            <li><strong>Žíněnky</strong> - tatami</li>
+                        </ul>
+                    </div>
+
+                    <div class="dictionary-section">
+                        <h3>Techniky a pohyby</h3>
+                        <ul>
+                            <li><strong>Pád</strong> - ukemi</li>
+                            <li><strong>Páky</strong> - katame-waza</li>
+                            <li><strong>Hody</strong> - nage-waza</li>
+                            <li><strong>Úder</strong> - cuki</li>
+                            <li><strong>Sek</strong> - uči</li>
+                            <li><strong>Rovný sek na hlavu</strong> - šomenuči</li>
+                            <li><strong>Šikmý sek na hlavu</strong> - jokomenuči</li>
+                            <li><strong>Úchop</strong> - dori</li>
+                            <li><strong>Blokace</strong> - osae</li>
+                            <li><strong>Krok</strong> - irimi</li>
+                            <li><strong>Výkřik</strong> - kijaj</li>
+                        </ul>
+                    </div>
+
+                    <div class="dictionary-section">
+                        <h3>Postoje a pozice</h3>
+                        <ul>
+                            <li><strong>Základní postoj</strong> - hanmi</li>
+                            <li><strong>Postoj na šíři ramen</strong> - šizentai</li>
+                            <li><strong>Chůze po kolenou</strong> - šiko</li>
+                            <li><strong>Sed v kleče</strong> - seiza</li>
+                            <li><strong>Turecký sed</strong> - hanza</li>
+                        </ul>
+                    </div>
+
+                    <div class="dictionary-section">
+                        <h3>Duchovní aspekty</h3>
+                        <ul>
+                            <li><strong>Učitel</strong> - sensei</li>
+                            <li><strong>Soustředěnost</strong> - zanšin</li>
+                            <li><strong>Uklidnění/meditace</strong> - mokuso</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="videoteka-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="modal-header">
+                <h2>Videotéka</h2>
+            </div>
+            <div class="modal-body">
+                <div class="video-section">
+                    <h3>Jo Suburi</h3>
+                    <ul>
+                        <li><a href="http://www.youtube.com/watch?v=f4JHvK4wZts" target="_blank">20 jo suburi - M.S. Provedení z roku 1973, Iwama</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=8R9XqrT8UMA" target="_blank">M.S. pozdní provedení s výkladem</a></li>
+                    </ul>
+                </div>
+
+                <div class="video-section">
+                    <h3>Jo Kata</h3>
+                    <ul>
+                        <li><a href="http://www.youtube.com/watch?v=5n1R0BiwTu0" target="_blank">13 jo kata - M.S. Provedení z roku 1973, Iwama</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=NdHlPwGK6xU" target="_blank">M.S. pozdní provedení zepředu a z boku</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=gqgoiRkmTtE" target="_blank">31 jo kata - M.S. Staré dynamické provedení z boku a zepředu</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=MFBoHsmOrFM" target="_blank">31 jo kata - M.S. Provedení z roku 1973, Iwama</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=kKxZz2g0Gow" target="_blank">M.S. pozdní provedení s výkladem – zepředu, z boku a na kříži ukázka práce nohou</a></li>
+                    </ul>
+                </div>
+
+                <div class="video-section">
+                    <h3>Kumi Jo</h3>
+                    <ul>
+                        <li><a href="http://www.youtube.com/watch?v=f7IQf6kqxMk" target="_blank">10 kumi jo - M.S. 1 – 5 kumi jo, pozdní provedení s výkladem</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=pJolX8mVyEk" target="_blank">M.S. 6 – 10 kumi jo, pozdní provedení s výkladem</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=efd4pTzZPZo" target="_blank">13 kumi jo kata - M.S. Pozdní provedení s výkladem</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=EDV_74Nnwm8" target="_blank">31 kumi jo kata - M.S. Pozdní provedení s výkladem (1-17)</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=uWIQxsKb1Ks" target="_blank">31 kumi jo kata - M.S. Pozdní provedení s výkladem (18-31)</a></li>
+                    </ul>
+                </div>
+
+                <div class="video-section">
+                    <h3>Ken Suburi</h3>
+                    <ul>
+                        <li><a href="http://www.youtube.com/watch?v=ZUbdPpVmJZ0" target="_blank">7 ken suburi - M.S. 1 – 3 ken suburi - pozdní provedení s výkladem</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=3p3kfB9FfKA" target="_blank">M.S. 4 – 7 ken suburi - pozdní provedení s výkladem</a></li>
+                    </ul>
+                </div>
+
+                <div class="video-section">
+                    <h3>Kumi Tachi</h3>
+                    <ul>
+                        <li><a href="http://www.youtube.com/watch?v=51xsumatrJw" target="_blank">5 Kumi tachi - M.S. 1 – 3 kumi tachi – pozdní provedení s výkladem</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=x2FZ-_0meVI" target="_blank">4 a 5 kumi tachi; ki musubi no tachi – pozdní provedení s výkladem</a></li>
+                    </ul>
+                </div>
+
+                <div class="video-section">
+                    <h3>Jo Dori</h3>
+                    <ul>
+                        <li><a href="http://www.youtube.com/watch?v=YM-c-O81r8k" target="_blank">M.S. 12 jo dori, Itálie 1992</a></li>
+                    </ul>
+                </div>
+
+                <div class="video-section">
+                    <h3>Tanken Dori</h3>
+                    <ul>
+                        <li><a href="http://www.youtube.com/watch?v=HGZkWQEHOTQ" target="_blank">M.S. 9 tanken dori, Itálie 1992</a></li>
+                    </ul>
+                </div>
+
+                <div class="video-section">
+                    <h3>Tachi Dori</h3>
+                    <ul>
+                        <li><a href="http://www.youtube.com/watch?v=ZAqL3SC-lGw" target="_blank">M.S. 13 tachi dori, Itálie 1992</a></li>
+                    </ul>
+                </div>
+
+                <div class="video-section">
+                    <h3>Ken Tai Jo</h3>
+                    <ul>
+                        <li><a href="http://www.youtube.com/watch?v=MjVTJs_ujYk" target="_blank">M.S. 12 technik (XY henka), San Diego 1991</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=y20MlvFI2QY" target="_blank">M.S. první tři techniky - Choku Barai, Kaeshi Barai, Kaiten Barai</a></li>
+                    </ul>
+                </div>
+
+                <div class="video-section">
+                    <h3>Taijutsu</h3>
+                    <ul>
+                        <li><a href="http://www.youtube.com/watch?v=0f1LOIqmNI4" target="_blank">Katate dori - M.S. techniky, Itálie 1992</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=eE72EIk4Ppg" target="_blank">Ai hanmi katate dori (kosa dori) - M.S. techniky, Itálie 1992</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=a--a1fxyHV8" target="_blank">Ryote dori - M.S. techniky, Itálie 1992</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=LgIcPJYY9Qs" target="_blank">Morote dori - M.S. techniky, Itálie 1992</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=h7caNGt_QmI" target="_blank">Muna dori - M.S. techniky, Itálie 1992</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=nXKg7XBNaZU" target="_blank">Sode guchi dori - M.S. techniky, Itálie 1992</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=eScBUNVu_I8" target="_blank">Sode dori - M.S. techniky, Itálie 1992</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=zGs77GCrP7o" target="_blank">Tsuki - M.S. techniky, Itálie 1992</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=b3JtD6KRMZ0" target="_blank">Shomen uchi - M.S. techniky, Itálie 1992</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=s-JvaEGJ5oE" target="_blank">Yokomen uchi - M.S. techniky, Itálie 1992</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=HoL1zQR88KI" target="_blank">Shomen uchi, kata dori, katate dori, tai shime dori - M.S. techniky, Itálie 1992</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=uUubPeUmTVs" target="_blank">Ushirowaza - M.S. techniky, Itálie 1992</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=57QcKKtEb9s" target="_blank">Ushiro ryote dori - M.S. techniky, Itálie 1992</a></li>
+                        <li><a href="http://www.youtube.com/watch?v=lb3WxRCc1Co" target="_blank">Ni nin dori - M.S. techniky, Itálie 1992</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Loading screen
+            const loadingScreen = document.querySelector('.loading-screen');
+            window.addEventListener('load', function() {
+                setTimeout(() => {
+                    loadingScreen.classList.add('fade-out');
+                }, 1000);
+            });
+
+            const cards = document.querySelectorAll('.studovna-card');
+            const modals = document.querySelectorAll('.modal');
+            const closeButtons = document.querySelectorAll('.close-button');
+            const examItems = document.querySelectorAll('.kyu-item, .dan-item');
+
+            const openModal = (modalId) => {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.style.display = 'block';
+                }
+            };
+
+            const closeModal = (modal) => {
+                modal.style.display = 'none';
+            };
+
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const modalId = card.getAttribute('data-modal');
+                    openModal(modalId);
+                });
+            });
+
+            closeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const modal = button.closest('.modal');
+                    closeModal(modal);
+                });
+            });
+
+            window.addEventListener('click', (event) => {
+                modals.forEach(modal => {
+                    if (event.target === modal) {
+                        closeModal(modal);
+                    }
+                });
+            });
+
+            // Add click handlers for exam items
+            examItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    // Get the row of the clicked item
+                    const rect = item.getBoundingClientRect();
+                    const rowItems = Array.from(examItems).filter(otherItem => {
+                        const otherRect = otherItem.getBoundingClientRect();
+                        return Math.abs(otherRect.top - rect.top) < 10; // Items in the same row
+                    });
+
+                    // Toggle all items in the same row
+                    rowItems.forEach(rowItem => {
+                        if (rowItem === item) {
+                            rowItem.classList.toggle('active');
+                        } else {
+                            rowItem.classList.remove('active');
+                        }
+                    });
+                });
+            });
+        });
+
+        // Navbar scroll effect
+        const navbar = document.querySelector('.navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Mobile navigation toggle
+        const navToggle = document.getElementById('nav-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        if (navToggle && navMenu) {
+            navToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                navToggle.textContent = navMenu.classList.contains('active') ? '✕' : '☰'; // Change icon
+            });
+            navMenu.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (navMenu.classList.contains('active')) {
+                        navMenu.classList.remove('active');
+                        navToggle.textContent = '☰';
+                    }
+                });
+            });
+        }
+
+        // Active link highlighting
+        const navLinks = document.querySelectorAll('.nav-menu .nav-link');
+        const sections = document.querySelectorAll('section[id]');
+
+        function changeLinkState() {
+            let index = sections.length;
+            const offset = window.innerHeight * 0.4; 
+
+            while(--index >= 0 && window.scrollY + offset < sections[index].offsetTop) {}
+            
+            navLinks.forEach((link) => link.classList.remove('active'));
+            
+            if (window.scrollY < sections[0].offsetTop - offset) {
+                if(navLinks[0]) navLinks[0].classList.add('active');
+            } else if (index >= 0 && navLinks[index]) { 
+                navLinks[index].classList.add('active');
+            } else if (index < 0 && navLinks[0]) {
+                if(navLinks[0]) navLinks[0].classList.add('active');
+            }
+        }
+        
+        if (sections.length > 0 && navLinks.length > 0) {
+            setTimeout(() => {
+                changeLinkState();
+            }, 100);
+            window.addEventListener('scroll', changeLinkState);
+        }
+    </script>
+
+    <!-- Contact Section at the end -->
+    <section class="contact-section" data-aos="fade-up">
+        <h2 class="contact-title">MÁTE DOTAZ?</h2>
+        <p class="contact-desc">Neváhejte nás kontaktovat, rádi vám odpovíme na vaše otázky.</p>
+        <a href="mailto:info@aikidocimice.cz" class="contact-btn">NAPSAT EMAIL</a>
+    </section>
+    <!-- Footer Start -->
+    <footer style="background: #000;" data-aos="fade-up">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 40px; max-width: 1200px; margin: 0 auto; padding-bottom: 10px;">
+            <div style="flex: 1 1 220px; min-width: 220px;">
+                <h3 style="color: #1A237E; font-family: 'Playfair Display', serif; margin-bottom: 12px;">Ronin Dojo</h3>
+                <p style="color: #aaa; font-size: 1rem; margin-bottom: 18px;">Cesta harmonie, síly a ducha.<br>Tradiční japonské bojové umění v srdci Prahy.</p>
+                <div style="margin-top: 18px;">
+                    <a href="https://facebook.com/aikidocimice" target="_blank" style="margin-right: 10px; color: #1A237E; text-decoration: none; font-size: 1.3em;">Facebook Čimice</a>
+                    <a href="https://facebook.com/aikidomesice" target="_blank" style="color: #8D5524; text-decoration: none; font-size: 1.3em;">Facebook Měšice</a>
+                </div>
+            </div>
+            <div style="flex: 1 1 180px; min-width: 180px;">
+                <h4 style="color: #fff; margin-bottom: 10px; font-family: 'Montserrat', sans-serif;">Rychlá navigace</h4>
+                <ul style="list-style: none; padding: 0; margin: 0; line-height: 2;">
+                    <li><a href="#about" style="color: #fff; text-decoration: none;">O nás</a></li>
+                    <li><a href="#trainings" style="color: #fff; text-decoration: none;">Tréninky</a></li>
+                    <li><a href="#team" style="color: #fff; text-decoration: none;">Tým</a></li>
+                    <li><a href="#pricing" style="color: #fff; text-decoration: none;">Ceník</a></li>
+                    <li><a href="#gallery" style="color: #fff; text-decoration: none;">Galerie</a></li>
+                    <li><a href="#faq" style="color: #fff; text-decoration: none;">FAQ</a></li>
+                    <li><a href="#contact" style="color: #fff; text-decoration: none;">Kontakt</a></li>
+                </ul>
+            </div>
+            <div style="flex: 1 1 220px; min-width: 220px;">
+                <h4 style="color: #1A237E; margin-bottom: 10px; font-family: 'Montserrat', sans-serif;">Dojo Čimice</h4>
+                <p style="color: #fff; font-size: 1em; margin-bottom: 8px;">Ulice Klubu 123<br>110 00 Praha 1</p>
+                <p style="color: #aaa; font-size: 0.97em; margin-bottom: 8px;">Jan Novák<br>Tel: <a href="tel:+420123456789" style="color: #1A237E;">+420 123 456 789</a><br>Email: <a href="mailto:info@aikidocimice.cz" style="color: #1A237E;">info@aikidocimice.cz</a></p>
+            </div>
+            <div style="flex: 1 1 220px; min-width: 220px;">
+                <h4 style="color: #8D5524; margin-bottom: 10px; font-family: 'Montserrat', sans-serif;">Dojo Měšice</h4>
+                <p style="color: #fff; font-size: 1em; margin-bottom: 8px;">Ulice Měšice 456<br>250 64 Měšice</p>
+                <p style="color: #aaa; font-size: 0.97em; margin-bottom: 8px;">Petra Svobodová<br>Tel: <a href="tel:+420987654321" style="color: #8D5524;">+420 987 654 321</a><br>Email: <a href="mailto:info@aikidomesice.cz" style="color: #8D5524;">info@aikidomesice.cz</a></p>
+            </div>
+        </div>
+        <div style="border-top: 1px solid #222; margin-top: 30px; padding-top: 18px; color: #aaa; font-size: 0.95em; text-align: center;">
+            © <span id="currentYear"></span> Aikido Klub Praha. Všechna práva vyhrazena. 
+        </div>
+    </footer>
+    <!-- Footer End -->
+
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script>
+      AOS.init({
+        once: true,
+        duration: 700,
+        easing: 'ease-out-cubic',
+        disable: function() {
+          return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        }
+      });
+    </script>
+</body>
+</html>
